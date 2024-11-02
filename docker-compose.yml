@@ -3,6 +3,9 @@ services:
     image: nginx:latest
     container_name: nginx
     restart: always
+    depends_on:
+      - php
+      - mysql
     ports:
       - "80:80"
       - "443:443"
@@ -18,9 +21,6 @@ services:
       dockerfile: Dockerfile
     container_name: php
     restart: always
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
       - ./www:/var/www/
