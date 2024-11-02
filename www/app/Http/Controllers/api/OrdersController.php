@@ -4,46 +4,25 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\OrdersRequest;
+use App\Services\OrdersService;
 
 class OrdersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(OrdersRequest $request)
     {
-        //
-    }
+        $validatedData = $request->validated();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $service = App()->make(OrdersService::class);
+        try {
+            $result = $service->process($validatedData);
+        } catch(\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 400);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(['success' => 1, 'transformedData' => $result]);
     }
 }
