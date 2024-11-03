@@ -60,11 +60,11 @@ SELECT `bnb_id`, B.`name` as `bnb_name`, SUM(`amount`) as `may_amount` FROM `ord
  ### 題目二
 在題目一的執行下,我們發現 SQL 執行速度很慢,您會怎麼去優化?請闡述您怎麼判斷與優化的方式
 
-1. 增加 index `(currency, created_at)`：首先對上面的 SQL 進行 EXPLAIN 檢查效能會發現進行全表掃描 (type 欄位為 ALL),兒查詢條件中僅有 currency 是指定值，created_at 是一個範圍，因此將 currency 放在前面，created_at 雖然是一個範圍但加進 index 也可以稍微提昇效能
+1. 增加 index `(currency, created_at)`：首先對上面的 SQL 進行 EXPLAIN 檢查效能會發現進行全表掃描 (type 欄位為 ALL)，而查詢條件中僅有 currency 是指定值，created_at 是一個範圍，因此將 currency 放在前面，created_at 雖然是一個範圍但加進 index 也可以稍微提昇效能
 
 2. 此查詢看起來是統計數據，為了不影響線上功能，建議建立排程在冷門時間進行搜尋並將結果存進另外的資料表，或者一定要立刻執行則可以到備援/備份資料庫進行搜尋
 
-3. 如果條件允許，可以將 orders 每個月的資料備份到另外一張表，減少因 created_at 增加的表搜尋時間
+3. 如果條件允許，可以將 orders 每個月的資料備份到另外一張表，如 orders_202305，減少因 created_at 增加的表搜尋時間
 
 4. 如果這是固定每月撈取的需求，可以另外建立一張統計表欄位大致為 month, bnb, currency, total_amount，每個月每間 bnb 的 TWD 資料就是固定的一列
 
