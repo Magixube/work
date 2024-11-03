@@ -21,6 +21,8 @@ services:
       dockerfile: Dockerfile
     container_name: php
     restart: always
+    depends_on:
+      - mysql
     working_dir: /var/www
     volumes:
       - ./www:/var/www/
