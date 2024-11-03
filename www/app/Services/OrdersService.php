@@ -7,20 +7,37 @@ use App\Services\OrdersService\NameAlphaHandler;
 use App\Services\OrdersService\NameCapitalizationHandler;
 use App\Services\OrdersService\PriceLimitHandler;
 
+use App\Utils\StringValidator;
+use App\Utils\NumberValidator;
+use App\Utils\CurrencyValidator;
+use App\Utils\CurrencyConverter;
 
-class OrdersService {
+
+class OrdersService implements IOrdersService
+{
     public function process(array $parameters)
     {
+        // $operators = [
+        //     NameAlphaHandler::class,
+        //     NameCapitalizationHandler::class,
+        //     PriceLimitHandler::class,
+        //     CurrencyValidationHandler::class,
+        //     CurrencyConversionHandler::class,
+        // ];
+        $stringValidator = new StringValidator();
+        $numberValidator = new NumberValidator();
+        $currencyValidator = new CurrencyValidator();
+        $currencyConverter = new CurrencyConverter();
+
         $operators = [
-            NameAlphaHandler::class,
-            NameCapitalizationHandler::class,
-            PriceLimitHandler::class,
-            CurrencyValidationHandler::class,
-            CurrencyConversionHandler::class,
+            new NameAlphaHandler($stringValidator),
+            new NameCapitalizationHandler($stringValidator),
+            new PriceLimitHandler($numberValidator),
+            new CurrencyValidationHandler($currencyValidator),
+            new CurrencyConversionHandler($currencyConverter),
         ];
 
-        foreach ($operators as $class) {
-            $operator = app()->make($class);
+        foreach ($operators as $operator) {
             $parameters = $operator->handle($parameters);
         }
 

@@ -1,14 +1,14 @@
 <?php
 namespace App\Utils;
 
-class StringValidator
+class StringValidator implements IStringValidator
 {
-    public static function isAlpha($value): bool
+    public function isAlpha($value): bool
     {
         return preg_match('/^[A-Za-z\s]+$/', $value);
     }
 
-    public static function isCapitalizedWords($value): bool
+    public function isCapitalizedWords($value): bool
     {
         $words = explode(' ', $value);
         foreach ($words as $word) {
