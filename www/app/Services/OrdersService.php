@@ -1,41 +1,20 @@
 <?php
 namespace App\Services;
 
-use App\Services\OrdersService\CurrencyConversionHandler;
-use App\Services\OrdersService\CurrencyValidationHandler;
-use App\Services\OrdersService\NameAlphaHandler;
-use App\Services\OrdersService\NameCapitalizationHandler;
-use App\Services\OrdersService\PriceLimitHandler;
-
-use App\Utils\StringValidator;
-use App\Utils\NumberValidator;
-use App\Utils\CurrencyValidator;
-use App\Utils\CurrencyConverter;
+use App\Services\OrdersService\HandlerFactory;
 
 
 class OrdersService implements IOrdersService
 {
+    private $handlerFactory;
+    public function __construct(HandlerFactory $handlerFactory)
+    {
+        $this->handlerFactory = $handlerFactory;
+    }
+    
     public function process(array $parameters)
     {
-        // $operators = [
-        //     NameAlphaHandler::class,
-        //     NameCapitalizationHandler::class,
-        //     PriceLimitHandler::class,
-        //     CurrencyValidationHandler::class,
-        //     CurrencyConversionHandler::class,
-        // ];
-        $stringValidator = new StringValidator();
-        $numberValidator = new NumberValidator();
-        $currencyValidator = new CurrencyValidator();
-        $currencyConverter = new CurrencyConverter();
-
-        $operators = [
-            new NameAlphaHandler($stringValidator),
-            new NameCapitalizationHandler($stringValidator),
-            new PriceLimitHandler($numberValidator),
-            new CurrencyValidationHandler($currencyValidator),
-            new CurrencyConversionHandler($currencyConverter),
-        ];
+        $operators = $this->handlerFactory->createHandlers();
 
         foreach ($operators as $operator) {
             $parameters = $operator->handle($parameters);

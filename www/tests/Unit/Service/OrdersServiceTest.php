@@ -6,13 +6,30 @@ use Tests\TestCase;
 use App\Services\OrdersService;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+use App\Utils\StringValidator;
+use App\Utils\NumberValidator;
+use App\Utils\CurrencyValidator;
+use App\Utils\CurrencyConverter;
+use App\Services\OrdersService\HandlerFactory;
+
 class OrdersServiceTest extends TestCase
 {
     #[DataProvider('processDataProvider')]
     public function testProcess(array $parameters, array $expected)
     {
+        $stringValidator = new StringValidator();
+        $numberValidator = new NumberValidator();
+        $currencyValidator = new CurrencyValidator();
+        $currencyConverter = new CurrencyConverter();
+
+        $handlerFactory = new HandlerFactory(
+            $stringValidator,
+            $numberValidator,
+            $currencyValidator,
+            $currencyConverter
+        );
         // Create an instance of the OrdersService
-        $service = new OrdersService();
+        $service = new OrdersService($handlerFactory);
 
         if (isset($expected['expectedException']) && $expected['expectedException']) {
             $this->expectException(\Exception::class);
