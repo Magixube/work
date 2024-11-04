@@ -1,53 +1,6 @@
 # Interview
 
-### 相關檔案
-* `docker/` 存放 docker image 相關的設定
-* `docker-compose.yml` 為每個 image 的設定
-* `Dockerfile` 為 php + Laravel 設定
-* `www/app/Enums`、`www/config/currency.php`及`www/route/api.php` 為使用於程式邏輯中的設定
-* `www/app/Services/`、`www/app/Http/Controller/api` 為本次測驗主要程式邏輯
-
-## 執行環境
-```
-Ubuntu 24.04.1 LTS
-Docker version 24.0.7, build 24.0.7-0ubuntu4.1
-PHP 8.3.6 (開發環境)
-Composer version 2.8.2
-```
-
-## 使用方式
-> [!NOTE]
-> docker 指令請視環境需要，前面可能要加上 `sudo`
-
-下載專案後，請先到 www 資料夾安裝專案必須的套件
-```
-composer install
-```
-於專案資料夾使用
-```
-docker compose up -d
-```
-本專案需要部份未使用資料庫，如有需要可加上
-```
-docker compose exec php php /var/www/artisan migrate
-```
-
-## 程式說明
-### SOLID 部份
-程式須符合 SOLID 原則，以下就各項說明
-
-1. 單一功能原則：本程式所涵蓋到的物件大多僅做一件事，Service 中檢查參數與轉換的部份，在 Service 中抽象為資料處理流程，因此 Service 的功能就變成了`將接收的資料根據寫好的處理流程進行處理`
-2. 開放封閉原則：如各功能有錯誤，僅須到相關類別進行調整並維持輸出。
-3. 里氏替換原則：Service 中任何 Handler 皆可被符合 IHandler 介面的 Handler 替換
-4. 介面隔離原則：IHandlr 不需要依賴其他功能
-5. 依賴反轉原則：Service 無法完全不依賴 Factory 與 Factory 無法不依賴各 Handler，其餘部份應無直接依賴非介面類型
-
-### 設計模式部份
-
-1. Factory: 用於注入各轉換器的依賴
-2. Adaptor: 將各個 Validator 與 Converter 包裝成 Handler，使 Service 更符合單一功能原則
-
-## 資料庫測驗部份
+## 資料庫測驗
 
 ### 題目一
 請寫出一條查詢語句 (SQL),列出在 2023 年 5 月下訂的訂單,使用台幣付款且5月總金額最
@@ -69,3 +22,64 @@ SELECT `bnb_id`, B.`name` as `bnb_name`, SUM(`amount`) as `may_amount` FROM `ord
 4. 如果這是固定每月撈取的需求，可以另外建立一張統計表欄位大致為 month, bnb, currency, total_amount，每個月每間 bnb 的 TWD 資料就是固定的一列
 
 Finally, Thank you for taking the time to read this page.
+
+## API 實作測驗
+
+
+### 程式說明
+#### SOLID 原則說明
+程式須符合 SOLID 原則，以下就各項說明
+
+1. 單一功能原則：本程式所涵蓋到的物件大多僅做一件事，Service 中檢查參數與轉換的部份，在 Service 中抽象為資料處理流程，因此 Service 的功能就變成了`將接收的資料根據寫好的處理流程進行處理`
+2. 開放封閉原則：如各功能有錯誤，僅須到相關類別進行調整並維持輸出。
+3. 里氏替換原則：Service 中任何 Handler 皆可被符合 IHandler 介面的 Handler 替換
+4. 介面隔離原則：IHandlr 不需要依賴其他功能
+5. 依賴反轉原則：Service 無法完全不依賴 Factory 與 Factory 無法不依賴各 Handler，其餘部份應無直接依賴非介面類型
+
+#### 使用到的設計模式
+
+1. Factory: 用於注入各轉換器的依賴
+2. Adaptor: 將各個 Validator 與 Converter 包裝成 Handler，使 Service 更符合單一功能原則
+
+
+
+### 相關檔案
+* `docker/` 存放 docker image 相關的設定
+* `docker-compose.yml` 為每個 image 的設定
+* `Dockerfile` 為 php + Laravel 設定
+* `www/app/Enums`、`www/config/currency.php`及`www/route/api.php` 為使用於程式邏輯中的設定
+* `www/app/Services/`、`www/app/Http/Controller/api` 為本次測驗主要程式邏輯
+* `www/tests/Unit/Service/OrdersServiceTest.php` 是本次測驗的測試
+
+### 執行環境
+```
+Ubuntu 24.04.1 LTS
+Docker version 24.0.7, build 24.0.7-0ubuntu4.1
+PHP 8.3.6 (開發環境)
+Composer version 2.8.2
+```
+
+### 使用方式
+> [!NOTE]
+> docker 指令請視環境需要，前面可能要加上 `sudo`
+
+下載專案後，請先到 www 資料夾安裝專案必須的套件
+```
+composer install
+```
+於專案資料夾使用
+```
+docker compose up -d
+```
+完成後可以使用 postman 進行測試如圖：
+![](images/postman_test.png)
+
+測試的部份可以使用 artisan：
+![](images/unit_test.png)
+
+
+> [!NOTE]
+> 本專案需要部份未使用資料庫，如有需要可加上
+```
+docker compose exec php php /var/www/artisan migrate
+```
